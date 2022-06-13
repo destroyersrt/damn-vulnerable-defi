@@ -29,12 +29,16 @@ contract TrusterLenderPool is ReentrancyGuard {
         external
         nonReentrant
     {
+        // DVT balance of this contract 
         uint256 balanceBefore = damnValuableToken.balanceOf(address(this));
         require(balanceBefore >= borrowAmount, "Not enough tokens in pool");
         
+        // Transfer borrowAmount from contract to borrower
         damnValuableToken.transfer(borrower, borrowAmount);
+
         target.functionCall(data);
 
+        // balance after flash loan 
         uint256 balanceAfter = damnValuableToken.balanceOf(address(this));
         require(balanceAfter >= balanceBefore, "Flash loan hasn't been paid back");
     }
